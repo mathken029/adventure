@@ -24,3 +24,10 @@ RPGツクール風の見下ろし型(トップダウン)アドベンチャーゲ
 - リポジトリ内パス: `addons/unityroom_sdk`
 - Copyright (c) 2026 Yusuke Nakada
 - License: MIT
+
+### Kosugi Maru (フォント)
+
+- リポジトリ内パス: `assets/fonts/KosugiMaru-Regular.ttf`
+- Source: https://github.com/google/fonts/tree/main/apache/kosugimaru
+- Copyright: The Kosugi Maru Project Authors
+- License: Apache License 2.0

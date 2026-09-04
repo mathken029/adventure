@@ -1,0 +1,3 @@
+Kosugi Maru (KosugiMaru-Regular.ttf)
+Source: https://github.com/google/fonts/tree/main/apache/kosugimaru
+License: Apache License, Version 2.0 (see LICENSE-Apache-2.0.txt in this directory)

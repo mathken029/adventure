@@ -25,12 +25,19 @@ RPGツクール風の見下ろし型(トップダウン)アドベンチャーゲ
 - タイルセットは `assets/tiles/tileset.png` (16x16タイル4種を横に並べたアトラス) から `TileSet`/`TileSetAtlasSource` を実行時に構築する。`WALL`/`TREE` には物理衝突ポリゴンを付与し、`CharacterBody2D` が通過できないようにする。
 - `is_walkable(cell)` でGRASS/PATHのみ通行可能と判定できる(将来のイベント配置等で利用)。
 
+### NPCと会話画面 (`scripts/npc.gd`, `scripts/dialogue_box.gd`)
+- `NPC` (`class_name NPC`, `StaticBody2D`): プレイヤーと同じスプライト仕様(32x32, 3列x4行)だが別配色のスプライトシート `assets/sprites/npc.png` を使用する静止キャラクター。`character_name` と `lines`(セリフの配列)を持つ。当たり判定はプレイヤーと同じ `RectangleShape2D` (14x10)。
+- `DialogueBox` (`class_name DialogueBox`, `Control`): 画面下部に表示する会話ウィンドウ。`start(speaker, lines)` で会話を開始し、`advance()` で次のセリフに進む。最後のセリフの次で非表示になり `is_active()` が `false` を返す。
+- 会話の開始/進行は `Main` がプレイヤーとNPCの距離(`INTERACT_RANGE` = 24px)と決定キー(E / Space / Enter のいずれか、押した瞬間のみ反応)を見て制御する。会話中は `Player.movement_enabled` を `false` にしてプレイヤー移動を止める。
+
 ### メインシーン (`scripts/main.gd`)
-- `GameWorld` と `Player` をインスタンス化して配置。
+- `GameWorld` / `Player` / `NPC` をインスタンス化して配置し、`CanvasLayer` 上に `DialogueBox` を1つ用意する。
 - `Camera2D` をプレイヤーの子として追加し、ズーム2.5倍・マップ範囲でリミットを設定してプレイヤーに追従する。
+- `_process` で決定キーの押下エッジを検出し、会話の開始/進行とプレイヤー移動の有効/無効を切り替える。
 
 ## 素材
-- `assets/sprites/player.png`: キャラクター歩行スプライトシート(自動生成のドット絵)。
+- `assets/sprites/player.png`: 主人公キャラクターの歩行スプライトシート(自動生成のドット絵、青系の配色)。
+- `assets/sprites/npc.png`: NPC(村人)の歩行スプライトシート(自動生成のドット絵、オレンジ系の配色)。同じフレームレイアウトで配色のみ変えている。
 - `assets/tiles/tileset.png`: 草原/道/壁/木のタイルセット(自動生成のドット絵)。
 
 ## テスト
@@ -38,6 +45,7 @@ RPGツクール風の見下ろし型(トップダウン)アドベンチャーゲ
 - `test/test_player.gd`: 向き判定・歩行アニメーションのフレーム切り替えロジックを検証。
 - `test/test_world.gd`: マップレイアウト生成(サイズ・外壁・パス配置)、通行可否判定を検証。
 - `test/test_license_notices.gd`: ライセンス表記文言にGUT/unityroom/MITの記載が含まれることを検証。
+- `test/test_dialogue_box.gd`: 会話の開始/進行/終了の状態遷移(`is_active`/`current_line`)を検証。
 
 ## サードパーティライセンス
 - GUT (`addons/gut`): MIT License, Copyright (c) 2018 Tom "Butch" Wesley

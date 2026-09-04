@@ -11,6 +11,7 @@ enum Dir { DOWN = 0, LEFT = 1, RIGHT = 2, UP = 3 }
 
 var facing: int = Dir.DOWN
 var walk_time: float = 0.0
+var movement_enabled: bool = true
 
 var sprite: Sprite2D
 var collision: CollisionShape2D
@@ -34,6 +35,13 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if not movement_enabled:
+		walk_time = 0.0
+		velocity = Vector2.ZERO
+		move_and_slide()
+		_update_sprite_frame(0)
+		return
+
 	var input_vector := get_input_vector()
 	var moving := input_vector.length() > 0.0
 

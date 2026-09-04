@@ -1,0 +1,6 @@
+.godot/
+.import/
+build/
+*.png
+*.wav
+*.mp3

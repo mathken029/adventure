@@ -43,6 +43,11 @@ func _ready() -> void:
 	dialogue_box = DialogueBox.new()
 	ui_layer.add_child(dialogue_box)
 
+	var touch_controls := TouchControls.new()
+	add_child(touch_controls)
+	touch_controls.move_input_changed.connect(func(v: Vector2) -> void: player.touch_input_vector = v)
+	touch_controls.interact_pressed.connect(_do_interact)
+
 
 func _process(_delta: float) -> void:
 	var interact_now := (
@@ -53,9 +58,11 @@ func _process(_delta: float) -> void:
 	var interact_just_pressed := interact_now and not _interact_prev
 	_interact_prev = interact_now
 
-	if not interact_just_pressed:
-		return
+	if interact_just_pressed:
+		_do_interact()
 
+
+func _do_interact() -> void:
 	if dialogue_box.is_active():
 		dialogue_box.advance()
 	elif player.global_position.distance_to(npc.global_position) <= INTERACT_RANGE:

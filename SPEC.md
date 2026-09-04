@@ -31,23 +31,32 @@ RPGツクール風の見下ろし型(トップダウン)アドベンチャーゲ
 - 会話の開始/進行は `Main` がプレイヤーとNPCの距離(`INTERACT_RANGE` = 24px)と決定キー(E / Space / Enter のいずれか、押した瞬間のみ反応)を見て制御する。会話中は `Player.movement_enabled` を `false` にしてプレイヤー移動を止める。
 
 ### メインシーン (`scripts/main.gd`)
-- `GameWorld` / `Player` / `NPC` をインスタンス化して配置し、`CanvasLayer` 上に `DialogueBox` を1つ用意する。
+- `GameWorld` / `Player` / `NPC` をインスタンス化して配置し、`CanvasLayer` 上に `DialogueBox` と `TouchControls` を1つずつ用意する。
 - `Camera2D` をプレイヤーの子として追加し、ズーム2.5倍・マップ範囲でリミットを設定してプレイヤーに追従する。
-- `_process` で決定キーの押下エッジを検出し、会話の開始/進行とプレイヤー移動の有効/無効を切り替える。
+- `_process` で決定キーの押下エッジを検出し、`_do_interact()` で会話の開始/進行とプレイヤー移動の有効/無効を切り替える。`TouchControls.interact_pressed` シグナルからも同じ `_do_interact()` を呼び出す。
+
+### スマホ向けタッチ操作 (`scripts/touch_controls.gd`, `class_name TouchControls`)
+- `CanvasLayer` (`layer=10`)。`DisplayServer.is_touchscreen_available()` がtrueの端末(スマホ等)でのみ表示する。
+- 画面左下に上下左右のボタンを十字状に配置し、押している間 `held` 辞書を更新して `current_vector()` で方向ベクトルを計算、`move_input_changed(vector)` シグナルで通知する。
+- 画面右下に「話す」ボタンを配置し、押した瞬間に `interact_pressed` シグナルを発火する(NPCとの会話開始/進行に使用)。
+- `Main` が `move_input_changed` を `Player.touch_input_vector` に反映し、キーボード入力とタッチ入力を合成する(`Player.get_input_vector`)。
 
 ## 素材
 - `assets/sprites/player.png`: 主人公キャラクターの歩行スプライトシート(自動生成のドット絵、青系の配色)。
 - `assets/sprites/npc.png`: NPC(村人)の歩行スプライトシート(自動生成のドット絵、オレンジ系の配色)。同じフレームレイアウトで配色のみ変えている。
 - `assets/tiles/tileset.png`: 草原/道/壁/木のタイルセット(自動生成のドット絵)。
+- `assets/fonts/KosugiMaru-Regular.ttf`: 日本語表示用フォント。`project.godot` の `gui/theme/custom_font` でプロジェクト全体のデフォルトフォントとして設定し、タイトル画面や会話ウィンドウの日本語が文字化け(いわゆる「トーフ」表示)しないようにする。
 
 ## テスト
 - GUTテストを `test/` 配下に配置。`.gutconfig.json` で `dirs: ["res://test/"]` を指定。
 - `test/test_player.gd`: 向き判定・歩行アニメーションのフレーム切り替えロジックを検証。
 - `test/test_world.gd`: マップレイアウト生成(サイズ・外壁・パス配置)、通行可否判定を検証。
-- `test/test_license_notices.gd`: ライセンス表記文言にGUT/unityroom/MITの記載が含まれることを検証。
+- `test/test_license_notices.gd`: ライセンス表記文言にGUT/unityroom/Kosugi Maru/MITの記載が含まれることを検証。
 - `test/test_dialogue_box.gd`: 会話の開始/進行/終了の状態遷移(`is_active`/`current_line`)を検証。
+- `test/test_touch_controls.gd`: 十字キーの押下状態から方向ベクトルを計算するロジックと `move_input_changed` シグナルの発火を検証。
 
 ## サードパーティライセンス
 - GUT (`addons/gut`): MIT License, Copyright (c) 2018 Tom "Butch" Wesley
 - unityroom SDK (`addons/unityroom_sdk`): MIT License, Copyright (c) 2026 Yusuke Nakada
+- Kosugi Maru (`assets/fonts/KosugiMaru-Regular.ttf`): Apache License 2.0, The Kosugi Maru Project Authors
 - 上記はリポジトリの `README.md` および、ゲーム内タイトル画面の「ライセンス表記」ダイアログの両方に記載する。

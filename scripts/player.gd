@@ -12,6 +12,7 @@ enum Dir { DOWN = 0, LEFT = 1, RIGHT = 2, UP = 3 }
 var facing: int = Dir.DOWN
 var walk_time: float = 0.0
 var movement_enabled: bool = true
+var touch_input_vector: Vector2 = Vector2.ZERO
 
 var sprite: Sprite2D
 var collision: CollisionShape2D
@@ -67,6 +68,9 @@ func get_input_vector() -> Vector2:
 		v.y -= 1
 	if Input.is_key_pressed(KEY_S) or Input.is_action_pressed("ui_down"):
 		v.y += 1
+	v += touch_input_vector
+	v.x = clampf(v.x, -1.0, 1.0)
+	v.y = clampf(v.y, -1.0, 1.0)
 	return v
 
 
